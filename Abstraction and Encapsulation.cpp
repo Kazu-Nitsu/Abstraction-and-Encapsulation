@@ -7,13 +7,13 @@ using namespace std;
 
 class Employee {
 protected:
-    int id;
+    string id;
     string name;
 public:
-    Employee(int id, string name) : id(id), name(name) {}
+    Employee(string id, string name) : id(id), name(name) {}
     virtual double calculateSalary() const = 0;
     virtual void display() const = 0;
-    int getId() const { return id; }
+    string getId() const { return id; }
     virtual ~Employee() {}
 };
 
@@ -21,7 +21,7 @@ class FullTimeEmployee : public Employee {
 private:
     double salary;
 public:
-    FullTimeEmployee(int id, string name, double salary)
+    FullTimeEmployee(string id, string name, double salary)
         : Employee(id, name), salary(salary) {}
 
     double calculateSalary() const override { return salary; }
@@ -37,7 +37,7 @@ private:
     double hourlyWage;
     int hoursWorked;
 public:
-    PartTimeEmployee(int id, string name, double hourlyWage, int hoursWorked)
+    PartTimeEmployee(string id, string name, double hourlyWage, int hoursWorked)
         : Employee(id, name), hourlyWage(hourlyWage), hoursWorked(hoursWorked) {}
 
     double calculateSalary() const override { return hourlyWage * hoursWorked; }
@@ -55,7 +55,7 @@ private:
     double paymentPerProject;
     int projectsCompleted;
 public:
-    ContractualEmployee(int id, string name, double paymentPerProject, int projectsCompleted)
+    ContractualEmployee(string id, string name, double paymentPerProject, int projectsCompleted)
         : Employee(id, name), paymentPerProject(paymentPerProject), projectsCompleted(projectsCompleted) {}
 
     double calculateSalary() const override { return paymentPerProject * projectsCompleted; }
@@ -68,18 +68,27 @@ public:
     }
 };
 
-set<int> existingIds;
+set<string> existingIds;
 
-int getUniqueId() {
-    int id;
+string getUniqueId() {
+    string id;
     while (true) {
         cout << "Enter Employee ID: ";
-        if (!(cin >> id) || id <= 0 || cin.peek() != '\n') {
-            cout << "Invalid input! Please enter a number.\n";
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin >> id;
+        
+        bool isValid = !id.empty();
+        for (char c : id) {
+            if (!isalnum(c)) {
+                isValid = false;
+                break;
+            }
+        }
+
+        if (!isValid) {
+            cout << "Invalid input! Please enter an Number or Letter\n";
             continue;
         }
+        
         if (existingIds.find(id) == existingIds.end()) {
             existingIds.insert(id);
             return id;
@@ -107,7 +116,7 @@ int getValidInt(const string& prompt) {
     while (true) {
         cout << prompt;
         if (!(cin >> value) || value <= 0 || cin.peek() != '\n') {
-            cout << "Invalid input! Please enter a positive integer without spaces.\n";
+            cout << "Invalid input! Please enter a numbern";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             continue;
@@ -125,7 +134,7 @@ int main() {
 
         switch (choice) {
             case 1: {
-                int id = getUniqueId();
+                string id = getUniqueId();
                 cin.ignore();
                 string name;
                 cout << "Enter Employee Name: ";
@@ -135,7 +144,7 @@ int main() {
                 break;
             }
             case 2: {
-                int id = getUniqueId();
+                string id = getUniqueId();
                 cin.ignore();
                 string name;
                 cout << "Enter Employee Name: ";
@@ -146,7 +155,7 @@ int main() {
                 break;
             }
             case 3: {
-                int id = getUniqueId();
+                string id = getUniqueId();
                 cin.ignore();
                 string name;
                 cout << "Enter Employee Name: ";
@@ -172,3 +181,4 @@ int main() {
     for (auto emp : employees) delete emp;
     return 0;
 }
+
